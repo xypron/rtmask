@@ -11,7 +11,7 @@ The rtmask program uses an ioctl() call to read the value. The ioctl is
 expected to be implemented in Linux v5.11 earliest. Cf.
 https://lore.kernel.org/linux-efi/20201127192051.1430-1-xypron.glpk@gmx.de/
 
-The kernel must be configure with CONFIG\_EFI\_TEST=m.
+The kernel must be configured with CONFIG\_EFI\_TEST=m.
 
 Usage
 -----
