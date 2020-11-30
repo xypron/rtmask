@@ -47,8 +47,12 @@ int main()
 	ret = ioctl(fd, EFI_RUNTIME_GET_SUPPORTED_MASK, &mask);
 	if (ret == -1) {
 		int err = errno;
-		perror("ioctl");
-		printf("effno %d\n", err);
+
+		if (err = ENOTTY)
+			printf("The IOCTL is not implemented\n");
+		else
+			perror("ioctl");
+
 		return 1;
 	}
 
