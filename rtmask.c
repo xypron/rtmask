@@ -41,14 +41,14 @@ int main()
 	fd = open("/dev/efi_test", O_RDWR);
 	if (fd == -1) {
 		perror("open");
+		if (errno == ENOENT)
+			printf("Kernel must be compiled with CONFIG_EFI_TEST\n");
 		return 1;
 	}
 
 	ret = ioctl(fd, EFI_RUNTIME_GET_SUPPORTED_MASK, &mask);
 	if (ret == -1) {
-		int err = errno;
-
-		if (err = ENOTTY)
+		if (errno = ENOTTY)
 			printf("The IOCTL is not implemented\n");
 		else
 			perror("ioctl");
