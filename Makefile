@@ -1,6 +1,9 @@
+export DESTDIR ?= /usr/local
+
 all:
 	gcc rtmask.c -o rtmask
 	chmod u+s rtmask
 
 install:
-	cp rtmask /usr/local/bin/rtmask
+	mkdir -p $(DESTDIR)/bin/
+	cp rtmask $(DESTDIR)/bin/rtmask
