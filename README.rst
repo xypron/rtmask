@@ -18,7 +18,9 @@ Usage
 
 rtmask takes no arguments.
 
-Running rtmask produces an output like the following:
+Running rtmask produces an output like the following
+
+.. code-block:: console
 
     $ rtmask
     RuntimeServicesSupported = 0x000005b0
