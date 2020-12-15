@@ -55,7 +55,7 @@ static const char * const rt_str[] = {
 
 int main(void)
 {
-	unsigned int i, j, flag;
+	unsigned int i, j, first_line;
 	int fd, ret;
 	unsigned int mask;
 	uid_t uid;
@@ -80,11 +80,11 @@ int main(void)
 
 	printf("RuntimeServicesSupported = 0x%08x\n", mask);
 
-	flag = 1;
+	first_line = 1;
 	for (i = 1, j = 0; i <= 0x2000; i <<= 1, ++j) {
 		if (i & mask) {
-			printf("%s %s\n", flag ? "=" : "|", rt_str[j]);
-			flag = 0;
+			printf("%s %s\n", first_line ? "=" : "|", rt_str[j]);
+			first_line = 0;
 		}
 	}
 
