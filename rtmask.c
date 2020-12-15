@@ -36,7 +36,7 @@
 #define EFI_RUNTIME_GET_SUPPORTED_MASK \
 	_IOR('p', 0x0C, unsigned int)
 
-static const char *rt_str[] = {
+static const char * const rt_str[] = {
 	"EFI_RT_SUPPORTED_GET_TIME",
 	"EFI_RT_SUPPORTED_SET_TIME",
 	"EFI_RT_SUPPORTED_GET_WAKEUP_TIME",
@@ -53,7 +53,7 @@ static const char *rt_str[] = {
 	"EFI_RT_SUPPORTED_QUERY_VARIABLE_INFO",
 };
 
-int main()
+int main(void)
 {
 	unsigned int i, j, flag;
 	int fd, ret;
@@ -70,7 +70,7 @@ int main()
 
 	ret = ioctl(fd, EFI_RUNTIME_GET_SUPPORTED_MASK, &mask);
 	if (ret == -1) {
-		if (errno = ENOTTY)
+		if (errno == ENOTTY)
 			printf("The IOCTL is not implemented\n");
 		else
 			perror("ioctl");
