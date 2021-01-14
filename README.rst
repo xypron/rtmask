@@ -8,8 +8,12 @@ EFI\_RT\_PROPERTIES\_TABLE with field RuntimeServicesSupported. The Linux EFI
 stub stores this internally.
 
 The rtmask program uses an ioctl() call to read the value. The ioctl is
-expected to be implemented in Linux v5.11 earliest. Cf.
+provided by Linux v5.11. Cf.
 https://lore.kernel.org/linux-efi/20201127192051.1430-1-xypron.glpk@gmx.de/
+
+A further ioctl() call is used to get the value of the field Revision of the
+EFI system table which indicates the UEFI specification revision to which
+the firmware conforms. This ioctl is to be expected in Linux v5.12 earliest.
 
 The kernel must be configured with CONFIG\_EFI\_TEST=m.
 

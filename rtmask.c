@@ -2,21 +2,28 @@
 /*
  * Copyright Heinrich Schuchardt, <xypron.glpk@gmx.de>
  *
- * This program allows to determine the supported UEFI runtime services.
+ * This program allows to determine the supported UEFI runtime services and the
+ * UEFI revision supported by the firmware.
  *
  * The UEFI firmware according to UEFI spec 2.8A supplies a configuration table
  * EFI_RT_PROPERTIES_TABLE with field RuntimeServicesSupported. The Linux EFI
  * stub stores this internally.
  *
  * The rtmask program uses an ioctl() call to read the value. The ioctl is
- * expected to be implemented in Linux v5.11 earliest. Cf.
+ * provided by Linux v5.11. Cf.
  * https://lore.kernel.org/linux-efi/20201127192051.1430-1-xypron.glpk@gmx.de/
+ *
+ * A further ioctl() call is used to get the value of the field Revision of the
+ * UEFI system table which indicates the UEFI specification revision to which
+ * the firmware conforms. This ioctl is to be expected in Linux v5.12 earliest.
  *
  * The kernel must be configured with CONFIG_EFI_TEST=m.
  *
  * Running rtmask produces an output like the following:
  *
  *     $ rtmask
+ *     EFI runtime information as provided by Linux
+ *     UEFI 2.80
  *     RuntimeServicesSupported = 0x000005b0
  *     = EFI_RT_SUPPORTED_GET_VARIABLE
  *     | EFI_RT_SUPPORTED_GET_NEXT_VARIABLE_NAME
@@ -35,6 +42,9 @@
 
 #define EFI_RUNTIME_GET_SUPPORTED_MASK \
 	_IOR('p', 0x0C, unsigned int)
+
+#define EFI_RUNTIME_GET_REVISION \
+	_IOR('p', 0x0D, unsigned int)
 
 static const char * const rt_str[] = {
 	"EFI_RT_SUPPORTED_GET_TIME",
@@ -58,7 +68,10 @@ int main(void)
 	unsigned int i, j, first_line;
 	int fd, ret;
 	unsigned int mask;
+	unsigned int revision;
 	uid_t uid;
+
+	printf("EFI runtime information as provided by Linux\n");
 
 	fd = open("/dev/efi_test", O_RDWR);
 	if (fd == -1) {
@@ -68,13 +81,31 @@ int main(void)
 		return 1;
 	}
 
+	ret = ioctl(fd, EFI_RUNTIME_GET_REVISION, &revision);
+	if (ret == -1) {
+		if (errno == ENOTTY)
+			printf("The IOCTL %d is not implemented\n",
+			       EFI_RUNTIME_GET_REVISION);
+		else
+			perror("ioctl");
+	} else {
+		if ((revision & 0xffff) % 10)
+			printf("UEFI %d.%d.%d\n", revision >> 16,
+			       (revision & 0xffff) / 10,
+			       (revision & 0xffff) % 10);
+		else
+			printf("UEFI %d.%d\n", revision >> 16,
+			       (revision & 0xffff) / 10);
+	}
+
 	ret = ioctl(fd, EFI_RUNTIME_GET_SUPPORTED_MASK, &mask);
 	if (ret == -1) {
 		if (errno == ENOTTY)
-			printf("The IOCTL is not implemented\n");
+			printf("The IOCTL %d is not implemented\n",
+			       EFI_RUNTIME_GET_SUPPORTED_MASK);
 		else
 			perror("ioctl");
-
+		close(fd);
 		return 1;
 	}
 
@@ -89,6 +120,5 @@ int main(void)
 	}
 
 	close(fd);
-
 	return 0;
 }
