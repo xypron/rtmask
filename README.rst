@@ -27,6 +27,8 @@ Running rtmask produces an output like the following
 .. code-block:: console
 
     $ rtmask
+    EFI runtime information as provided by Linux
+    UEFI 2.8
     RuntimeServicesSupported = 0x000005b0
     = EFI_RT_SUPPORTED_GET_VARIABLE
     | EFI_RT_SUPPORTED_GET_NEXT_VARIABLE_NAME
